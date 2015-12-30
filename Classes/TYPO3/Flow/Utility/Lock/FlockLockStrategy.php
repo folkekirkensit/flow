@@ -91,6 +91,7 @@ class FlockLockStrategy implements LockStrategyInterface
         $environment = Bootstrap::$staticObjectManager->get('TYPO3\Flow\Utility\Environment');
         $temporaryDirectory = Files::concatenatePaths([$environment->getPathToTemporaryDirectory(), 'Lock']);
         Files::createDirectoryRecursively($temporaryDirectory);
+        chmod($temporaryDirectory, 0777);
         self::$temporaryDirectory = $temporaryDirectory;
     }
 
@@ -107,7 +108,7 @@ class FlockLockStrategy implements LockStrategyInterface
         if ($this->filePointer === false) {
             throw new LockNotAcquiredException(sprintf('Lock file "%s" could not be opened', $this->lockFileName), 1386520596);
         }
-
+        chmod($this->lockFileName, 0777);
         $this->applyFlock($exclusiveLock);
 
         $fstat = fstat($this->filePointer);
